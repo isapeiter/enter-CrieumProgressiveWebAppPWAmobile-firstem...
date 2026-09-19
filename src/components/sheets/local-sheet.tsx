@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { CardapioCard } from "@/components/cardapio-card";
 import { useAvisos, useSalasDoLocal } from "@/hooks/use-data";
 import { hojeISO } from "@/lib/format";
-import { COR_CATEGORIA, type Local } from "@/lib/types";
+import { corDoGrupo, type Local } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 interface LocalSheetProps {
@@ -35,7 +35,7 @@ export function LocalSheet({ local, aberta, onOpenChange }: LocalSheetProps) {
     return mapa;
   }, [avisos]);
 
-  const cor = local ? COR_CATEGORIA[local.categoria] ?? "#FFC107" : "#FFC107";
+  const cor = local ? corDoGrupo(local.categoria) : "#FFC107";
 
   return (
     <Drawer open={aberta && Boolean(local)} onOpenChange={onOpenChange}>

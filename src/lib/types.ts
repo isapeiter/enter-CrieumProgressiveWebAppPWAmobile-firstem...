@@ -17,25 +17,43 @@ export type Prioridade = Chamado["prioridade"];
 export type StatusChamado = Chamado["status"];
 export type Refeicao = Cardapio["refeicao"];
 
-export const COR_CATEGORIA: Record<string, string> = {
-  Blocos: "#3B82F6",
-  RU: "#F59E0B",
-  Biblioteca: "#8B5CF6",
-  Serviços: "#06B6D4",
-  Esporte: "#22C55E",
-  Transporte: "#6366F1",
-};
-
-export const CATEGORIAS_LOCAIS = [
+/** Grupos de filtro exibidos no mapa (as categorias existentes são agrupadas neles) */
+export const GRUPOS_FILTRO = [
   "Blocos",
-  "RU",
-  "Biblioteca",
+  "Alimentação",
+  "Acadêmico",
   "Serviços",
-  "Esporte",
-  "Transporte",
 ] as const;
 
-export const FILTROS_MAPA = ["Todos", ...CATEGORIAS_LOCAIS] as const;
+export const FILTROS_MAPA = ["Todos", ...GRUPOS_FILTRO] as const;
+
+/** Mapeia a categoria cadastrada do local para o grupo de filtro */
+export const CATEGORIA_GRUPO: Record<string, string> = {
+  Blocos: "Blocos",
+  RU: "Alimentação",
+  Biblioteca: "Acadêmico",
+  Coordenações: "Acadêmico",
+  DERAC: "Acadêmico",
+  Serviços: "Serviços",
+  Esporte: "Serviços",
+  Transporte: "Serviços",
+};
+
+export function grupoDeCategoria(categoria: string): string {
+  return CATEGORIA_GRUPO[categoria] ?? "Serviços";
+}
+
+/** Cor por grupo de filtro (legível no OSM e no satélite) */
+export const COR_GRUPO: Record<string, string> = {
+  Blocos: "#3B82F6",
+  Alimentação: "#F59E0B",
+  Acadêmico: "#8B5CF6",
+  Serviços: "#06B6D4",
+};
+
+export function corDoGrupo(categoria: string): string {
+  return COR_GRUPO[grupoDeCategoria(categoria)] ?? "#06B6D4";
+}
 
 export const CATEGORIAS_CHAMADO = [
   "Computador/Notebook",

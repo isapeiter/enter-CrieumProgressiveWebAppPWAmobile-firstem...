@@ -22,7 +22,7 @@ import { Chip } from "@/components/chip";
 import { Button } from "@/components/ui/button";
 import { useAvisos, useLocais, useSalas } from "@/hooks/use-data";
 import { useInstallPrompt } from "@/hooks/use-install-prompt";
-import { CENTRO_MAPA, FILTROS_MAPA, type Local } from "@/lib/types";
+import { CENTRO_MAPA, FILTROS_MAPA, grupoDeCategoria, type Local } from "@/lib/types";
 
 interface CampusMapProps {
   onSelectLocal: (local: Local) => void;
@@ -89,7 +89,8 @@ export function CampusMap({ onSelectLocal, foco }: CampusMapProps) {
   const locaisFiltrados = useMemo(() => {
     if (!locais) return [];
     if (categoria === "Todos") return locais;
-    return locais.filter((l) => l.categoria === categoria);
+    // Filtra pelo grupo (Blocos, Alimentação, Acadêmico, Serviços)
+    return locais.filter((l) => grupoDeCategoria(l.categoria) === categoria);
   }, [locais, categoria]);
 
   const resultadoBusca = useMemo(() => {
