@@ -21,16 +21,18 @@ export const COR_CATEGORIA: Record<string, string> = {
   Blocos: "#3B82F6",
   RU: "#F59E0B",
   Biblioteca: "#8B5CF6",
-  Coordenação: "#06B6D4",
-  Informática: "#22C55E",
+  Serviços: "#06B6D4",
+  Esporte: "#22C55E",
+  Transporte: "#6366F1",
 };
 
 export const CATEGORIAS_LOCAIS = [
   "Blocos",
   "RU",
   "Biblioteca",
-  "Coordenação",
-  "Informática",
+  "Serviços",
+  "Esporte",
+  "Transporte",
 ] as const;
 
 export const FILTROS_MAPA = ["Todos", ...CATEGORIAS_LOCAIS] as const;
@@ -91,4 +93,8 @@ export const DEMO_ACCOUNTS = [
   { email: "carlos.lima@alunos.utfpr.edu.br", papel: "Aluno" },
 ];
 
-export const CENTRO_MAPA: [number, number] = [-26.0795, -53.0505];
+/**
+ * Centro do mapa: UTFPR – Câmpus Francisco Beltrão
+ * (polígono da universidade no OpenStreetMap: -26.0849479, -53.0907074)
+ */
+export const CENTRO_MAPA: [number, number] = [-26.0849, -53.0907];

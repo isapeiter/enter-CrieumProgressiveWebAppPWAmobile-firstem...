@@ -1,0 +1,23 @@
+-- Remove blocos/locais fictícios (B, C, Coordenação, Lab) e dados dependentes
+DELETE FROM public.locais WHERE id IN ('10000000-0000-4000-8000-000000000002','10000000-0000-4000-8000-000000000003','10000000-0000-4000-8000-000000000006','10000000-0000-4000-8000-000000000007');
+
+-- Novas categorias dos locais reais
+ALTER TABLE public.locais DROP CONSTRAINT IF EXISTS locais_categoria_check;
+ALTER TABLE public.locais ADD CONSTRAINT locais_categoria_check CHECK (categoria IN ('Blocos','RU','Biblioteca','Serviços','Esporte','Transporte'));
+
+-- Coordenadas reais (OpenStreetMap)
+UPDATE public.locais SET nome = 'Bloco A – Hall de Entrada e Anfiteatro', lat = -26.0826056, lng = -53.0913841 WHERE id = '10000000-0000-4000-8000-000000000001';
+UPDATE public.locais SET lat = -26.0840988, lng = -53.0914881 WHERE id = '10000000-0000-4000-8000-000000000004';
+UPDATE public.locais SET lat = -26.0835243, lng = -53.0914878 WHERE id = '10000000-0000-4000-8000-000000000005';
+
+-- Novos locais reais do câmpus
+INSERT INTO public.locais (id, nome, categoria, descricao, lat, lng) VALUES
+ ('10000000-0000-4000-8000-000000000002', 'Bloco O', 'Blocos', 'Coordenadas provisórias — aguardando posição real.', -26.08520, -53.09020),
+ ('10000000-0000-4000-8000-000000000003', 'Bloco R', 'Blocos', 'Secretaria Acadêmica no subsolo do Bloco R.', -26.0860230, -53.0912567),
+ ('10000000-0000-4000-8000-000000000006', 'Bloco Q', 'Blocos', 'Salas de aula e coordenações de cursos.', -26.0859496, -53.0910205),
+ ('10000000-0000-4000-8000-000000000007', 'Bloco G', 'Blocos', 'Salas de aula do bloco G.', -26.0848926, -53.0914480),
+ ('10000000-0000-4000-8000-000000000008', 'Bloco Meia Lua', 'Blocos', 'Coordenadas provisórias — aguardando posição real.', -26.08390, -53.09090),
+ ('10000000-0000-4000-8000-000000000009', 'Centro de Convivência', 'Serviços', 'Convivência e cantina do câmpus.', -26.0820954, -53.0916109),
+ ('10000000-0000-4000-8000-000000000010', 'Quadra de Esporte', 'Esporte', 'Quadra poliesportiva coberta.', -26.0842432, -53.0906261),
+ ('10000000-0000-4000-8000-000000000011', 'Ponto de Ônibus', 'Transporte', 'Coordenadas provisórias — aguardando posição real.', -26.08320, -53.08920),
+ ('10000000-0000-4000-8000-000000000012', 'Portão de Entrada e Guarita', 'Serviços', 'Coordenadas provisórias — aguardando posição real.', -26.08270, -53.08940);
