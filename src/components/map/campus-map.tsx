@@ -22,7 +22,13 @@ import { Chip } from "@/components/chip";
 import { Button } from "@/components/ui/button";
 import { useAvisos, useLocais, useSalas } from "@/hooks/use-data";
 import { useInstallPrompt } from "@/hooks/use-install-prompt";
-import { CENTRO_MAPA, FILTROS_MAPA, grupoDeCategoria, type Local } from "@/lib/types";
+import {
+  CENTRO_MAPA,
+  FILTROS_MAPA,
+  grupoDeCategoria,
+  posicaoConfirmada,
+  type Local,
+} from "@/lib/types";
 
 interface CampusMapProps {
   onSelectLocal: (local: Local) => void;
@@ -88,9 +94,11 @@ export function CampusMap({ onSelectLocal, foco }: CampusMapProps) {
 
   const locaisFiltrados = useMemo(() => {
     if (!locais) return [];
-    if (categoria === "Todos") return locais;
+    // Apenas locais com posição confirmada são exibidos
+    const confirmados = locais.filter((l) => posicaoConfirmada(l));
+    if (categoria === "Todos") return confirmados;
     // Filtra pelo grupo (Blocos, Alimentação, Acadêmico, Serviços)
-    return locais.filter((l) => grupoDeCategoria(l.categoria) === categoria);
+    return confirmados.filter((l) => grupoDeCategoria(l.categoria) === categoria);
   }, [locais, categoria]);
 
   const resultadoBusca = useMemo(() => {
@@ -98,8 +106,9 @@ export function CampusMap({ onSelectLocal, foco }: CampusMapProps) {
     if (q.length < 2) return { salas: [], locais: [] as Local[] };
     const locaisMatch = (locais ?? []).filter(
       (l) =>
-        l.nome.toLowerCase().includes(q) ||
-        (l.descricao ?? "").toLowerCase().includes(q),
+        posicaoConfirmada(l) &&
+        (l.nome.toLowerCase().includes(q) ||
+          (l.descricao ?? "").toLowerCase().includes(q)),
     );
     const salasMatch = (salas ?? [])
       .filter((s) => s.nome.toLowerCase().includes(q))

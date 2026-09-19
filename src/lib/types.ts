@@ -116,3 +116,24 @@ export const DEMO_ACCOUNTS = [
  * (polígono da universidade no OpenStreetMap: -26.0849479, -53.0907074)
  */
 export const CENTRO_MAPA: [number, number] = [-26.0849, -53.0907];
+
+/**
+ * Classificação INTERNA de posição dos locais (não exibida ao usuário).
+ * Apenas locais com posição georreferenciada confirmada são exibidos no mapa;
+ * os demais (posição a revisar) permanecem no banco, mas ficam ocultos até
+ * receberem coordenadas reais confirmadas.
+ */
+export const LOCAIS_POSICAO_CONFIRMADA = new Set<string>([
+  "10000000-0000-4000-8000-000000000001", // Bloco A – Hall de Entrada e Anfiteatro (OSM)
+  "10000000-0000-4000-8000-000000000003", // Bloco R (OSM)
+  "10000000-0000-4000-8000-000000000004", // RU (OSM)
+  "10000000-0000-4000-8000-000000000005", // Biblioteca (OSM)
+  "10000000-0000-4000-8000-000000000006", // Bloco Q (OSM)
+  "10000000-0000-4000-8000-000000000007", // Bloco G (OSM)
+  "10000000-0000-4000-8000-000000000009", // Centro de Convivência (OSM)
+  "10000000-0000-4000-8000-000000000010", // Quadra de Esporte (ginásio no satélite)
+]);
+
+export function posicaoConfirmada(local: Local): boolean {
+  return LOCAIS_POSICAO_CONFIRMADA.has(local.id);
+}

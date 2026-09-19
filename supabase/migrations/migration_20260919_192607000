@@ -1,0 +1,1 @@
+update public.locais set lat = -26.0844, lng = -53.0906 where id = '10000000-0000-4000-8000-000000000010' and nome = 'Quadra de Esporte';
