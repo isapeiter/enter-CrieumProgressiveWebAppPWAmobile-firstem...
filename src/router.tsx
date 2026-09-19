@@ -1,6 +1,7 @@
 import { AppLayout } from "@/components/layout";
 import Index from "./pages/Index";
 import AvisosPage from "./pages/AvisosPage";
+import OportunidadesPage from "./pages/OportunidadesPage";
 import PainelPage from "./pages/PainelPage";
 import PerfilPage from "./pages/PerfilPage";
 import ReportarPage from "./pages/ReportarPage";
@@ -14,6 +15,7 @@ export const routers = [
     children: [
       { index: true, element: <Index /> },
       { path: "avisos", element: <AvisosPage /> },
+      { path: "oportunidades", element: <OportunidadesPage /> },
       { path: "reportar", element: <ReportarPage /> },
       { path: "perfil", element: <PerfilPage /> },
       { path: "painel", element: <PainelPage /> },

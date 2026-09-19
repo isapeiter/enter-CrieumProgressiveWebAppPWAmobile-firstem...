@@ -3591,6 +3591,46 @@ export type Database = {
         }
         Relationships: []
       }
+      oportunidades: {
+        Row: {
+          autor_nome: string | null
+          contato: string | null
+          criado_em: string
+          criado_por: string | null
+          descricao: string
+          id: string
+          tipo: string
+          titulo: string
+        }
+        Insert: {
+          autor_nome?: string | null
+          contato?: string | null
+          criado_em?: string
+          criado_por?: string | null
+          descricao: string
+          id?: string
+          tipo: string
+          titulo: string
+        }
+        Update: {
+          autor_nome?: string | null
+          contato?: string | null
+          criado_em?: string
+          criado_por?: string | null
+          descricao?: string
+          id?: string
+          tipo?: string
+          titulo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "oportunidades_criado_por_fkey"
+            columns: ["criado_por"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           criado_em: string

@@ -1,0 +1,26 @@
+-- Tabela de Oportunidades (projetos, atividades, estágios e avisos da faculdade)
+create table public.oportunidades (
+  id uuid primary key default gen_random_uuid(),
+  titulo text not null,
+  tipo text not null check (tipo in ('Projeto','Atividade','Estágio','Empresa','Outro')),
+  descricao text not null,
+  contato text,
+  criado_por uuid references public.profiles(id) on delete set null,
+  autor_nome text,
+  criado_em timestamptz not null default now()
+);
+alter table public.oportunidades enable row level security;
+
+create policy "oportunidades_select_public" on public.oportunidades for select using (true);
+create policy "oportunidades_insert_auth" on public.oportunidades for insert with check (auth.uid() = criado_por);
+
+create or replace function public.set_oportunidade_autor()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare v_nome text;
+begin
+  select nome into v_nome from public.profiles where id = new.criado_por;
+  new.autor_nome := v_nome;
+  return new;
+end $$;
+create trigger oportunidades_set_autor before insert on public.oportunidades
+for each row execute function public.set_oportunidade_autor();

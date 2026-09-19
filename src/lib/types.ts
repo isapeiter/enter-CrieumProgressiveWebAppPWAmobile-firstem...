@@ -16,6 +16,24 @@ export type TipoAviso = Aviso["tipo"];
 export type Prioridade = Chamado["prioridade"];
 export type StatusChamado = Chamado["status"];
 export type Refeicao = Cardapio["refeicao"];
+export type Oportunidade = Tables["oportunidades"]["Row"];
+export type TipoOportunidade = Oportunidade["tipo"];
+
+export const TIPOS_OPORTUNIDADE = [
+  "Projeto",
+  "Atividade",
+  "Estágio",
+  "Empresa",
+  "Outro",
+] as const;
+
+export const COR_TIPO_OPORTUNIDADE: Record<TipoOportunidade, string> = {
+  Projeto: "#F59E0B",
+  Atividade: "#8B5CF6",
+  Estágio: "#22C55E",
+  Empresa: "#3B82F6",
+  Outro: "#6B7280",
+};
 
 /** Grupos de filtro exibidos no mapa (as categorias existentes são agrupadas neles) */
 export const GRUPOS_FILTRO = [

@@ -1,0 +1,1 @@
+update public.salas set nome = 'COENQ – Engenharia Química (Sala 303)', andar = '3º andar' where id = '20000000-0000-4000-8000-000000000702';

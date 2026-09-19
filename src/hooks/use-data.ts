@@ -7,6 +7,7 @@ import type {
   Chamado,
   Horario,
   Local,
+  Oportunidade,
   Sala,
 } from "@/lib/types";
 
@@ -121,6 +122,21 @@ export function useChamadosTodos() {
         supabase.from("chamados").select("*").order("criado_em"),
       ),
     staleTime: 15_000,
+  });
+}
+
+/** Oportunidades (projetos, atividades, estágios e avisos gerais) */
+export function useOportunidades() {
+  return useQuery({
+    queryKey: ["oportunidades"],
+    queryFn: () =>
+      ler<Oportunidade[]>(
+        supabase
+          .from("oportunidades")
+          .select("*")
+          .order("criado_em", { ascending: false }),
+      ),
+    staleTime: 30_000,
   });
 }
 
