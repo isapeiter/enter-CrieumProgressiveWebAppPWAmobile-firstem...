@@ -1,0 +1,1 @@
+delete from storage.objects where bucket_id = 'chamados-fotos' and name = '68de067a-bfbb-42bc-b683-d1c472aa34d5.png';

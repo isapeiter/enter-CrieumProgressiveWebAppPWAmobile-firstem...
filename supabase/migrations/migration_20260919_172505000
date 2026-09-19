@@ -1,0 +1,1 @@
+update auth.users set confirmation_token = '', recovery_token = '', email_change = '', email_change_token_new = '', email_change_confirm_status = 0, last_sign_in_at = null where email = 'testesql@alunos.utfpr.edu.br';

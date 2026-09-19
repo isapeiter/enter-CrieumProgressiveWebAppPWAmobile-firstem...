@@ -1,0 +1,3 @@
+update auth.users set confirmation_token = '', recovery_token = '', email_change = '', email_change_token_new = '', email_change_confirm_status = 0 where email in ('ana.souza@utfpr.edu.br','paulo.vieira@utfpr.edu.br','carlos.lima@alunos.utfpr.edu.br','marina.rocha@alunos.utfpr.edu.br','joao.pedro@alunos.utfpr.edu.br','bruno.ferreira@utfpr.edu.br');
+
+delete from auth.users where email in ('teste@alunos.utfpr.edu.br','teste2@utfpr.edu.br','testesql@alunos.utfpr.edu.br');

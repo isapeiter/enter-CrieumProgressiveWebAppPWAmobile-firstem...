@@ -3360,7 +3360,292 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      avisos: {
+        Row: {
+          criado_em: string
+          criado_por: string
+          criador_nome: string | null
+          data_evento: string
+          horario: string | null
+          id: string
+          mensagem: string | null
+          nova_sala_id: string | null
+          sala_id: string
+          tipo: string
+        }
+        Insert: {
+          criado_em?: string
+          criado_por: string
+          criador_nome?: string | null
+          data_evento: string
+          horario?: string | null
+          id?: string
+          mensagem?: string | null
+          nova_sala_id?: string | null
+          sala_id: string
+          tipo: string
+        }
+        Update: {
+          criado_em?: string
+          criado_por?: string
+          criador_nome?: string | null
+          data_evento?: string
+          horario?: string | null
+          id?: string
+          mensagem?: string | null
+          nova_sala_id?: string | null
+          sala_id?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avisos_criado_por_fkey"
+            columns: ["criado_por"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avisos_nova_sala_id_fkey"
+            columns: ["nova_sala_id"]
+            referencedRelation: "salas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avisos_sala_id_fkey"
+            columns: ["sala_id"]
+            referencedRelation: "salas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cardapio: {
+        Row: {
+          abre: string | null
+          alterado: boolean
+          atualizado_em: string
+          data: string
+          fecha: string | null
+          guarnicao: string | null
+          observacao: string | null
+          prato_principal: string | null
+          refeicao: string
+          salada: string | null
+          sobremesa: string | null
+          vegetariana: string | null
+        }
+        Insert: {
+          abre?: string | null
+          alterado?: boolean
+          atualizado_em?: string
+          data: string
+          fecha?: string | null
+          guarnicao?: string | null
+          observacao?: string | null
+          prato_principal?: string | null
+          refeicao: string
+          salada?: string | null
+          sobremesa?: string | null
+          vegetariana?: string | null
+        }
+        Update: {
+          abre?: string | null
+          alterado?: boolean
+          atualizado_em?: string
+          data?: string
+          fecha?: string | null
+          guarnicao?: string | null
+          observacao?: string | null
+          prato_principal?: string | null
+          refeicao?: string
+          salada?: string | null
+          sobremesa?: string | null
+          vegetariana?: string | null
+        }
+        Relationships: []
+      }
+      chamados: {
+        Row: {
+          atualizado_em: string
+          autor_nome: string | null
+          autor_papel: string | null
+          categoria: string
+          criado_em: string
+          criado_por: string
+          descricao: string
+          foto_url: string | null
+          id: string
+          local_texto: string
+          prioridade: string
+          sala_id: string | null
+          status: string
+        }
+        Insert: {
+          atualizado_em?: string
+          autor_nome?: string | null
+          autor_papel?: string | null
+          categoria: string
+          criado_em?: string
+          criado_por: string
+          descricao: string
+          foto_url?: string | null
+          id?: string
+          local_texto: string
+          prioridade?: string
+          sala_id?: string | null
+          status?: string
+        }
+        Update: {
+          atualizado_em?: string
+          autor_nome?: string | null
+          autor_papel?: string | null
+          categoria?: string
+          criado_em?: string
+          criado_por?: string
+          descricao?: string
+          foto_url?: string | null
+          id?: string
+          local_texto?: string
+          prioridade?: string
+          sala_id?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chamados_criado_por_fkey"
+            columns: ["criado_por"]
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chamados_sala_id_fkey"
+            columns: ["sala_id"]
+            referencedRelation: "salas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      horarios: {
+        Row: {
+          dia_semana: number
+          disciplina: string
+          fim: string
+          id: string
+          inicio: string
+          professor: string
+          sala_id: string
+          turma: string | null
+        }
+        Insert: {
+          dia_semana: number
+          disciplina: string
+          fim: string
+          id?: string
+          inicio: string
+          professor: string
+          sala_id: string
+          turma?: string | null
+        }
+        Update: {
+          dia_semana?: number
+          disciplina?: string
+          fim?: string
+          id?: string
+          inicio?: string
+          professor?: string
+          sala_id?: string
+          turma?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "horarios_sala_id_fkey"
+            columns: ["sala_id"]
+            referencedRelation: "salas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locais: {
+        Row: {
+          categoria: string
+          descricao: string | null
+          id: string
+          lat: number
+          lng: number
+          nome: string
+        }
+        Insert: {
+          categoria: string
+          descricao?: string | null
+          id?: string
+          lat: number
+          lng: number
+          nome: string
+        }
+        Update: {
+          categoria?: string
+          descricao?: string | null
+          id?: string
+          lat?: number
+          lng?: number
+          nome?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          criado_em: string
+          email: string
+          id: string
+          nome: string
+          papel: string
+        }
+        Insert: {
+          criado_em?: string
+          email: string
+          id: string
+          nome?: string
+          papel: string
+        }
+        Update: {
+          criado_em?: string
+          email?: string
+          id?: string
+          nome?: string
+          papel?: string
+        }
+        Relationships: []
+      }
+      salas: {
+        Row: {
+          andar: string | null
+          id: string
+          local_id: string
+          nome: string
+          tipo: string
+        }
+        Insert: {
+          andar?: string | null
+          id?: string
+          local_id: string
+          nome: string
+          tipo: string
+        }
+        Update: {
+          andar?: string | null
+          id?: string
+          local_id?: string
+          nome?: string
+          tipo?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salas_local_id_fkey"
+            columns: ["local_id"]
+            referencedRelation: "locais"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

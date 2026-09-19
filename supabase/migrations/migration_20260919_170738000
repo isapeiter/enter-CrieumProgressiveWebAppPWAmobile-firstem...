@@ -1,0 +1,193 @@
+-- Campus Fácil - schema (UTFPR Francisco Beltrão)
+
+-- ============ PROFILES ============
+create table public.profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  nome text not null default '',
+  email text not null,
+  papel text not null check (papel in ('aluno','professor','estagiario')),
+  criado_em timestamptz not null default now()
+);
+alter table public.profiles enable row level security;
+
+create policy "profiles_select_own" on public.profiles for select using (auth.uid() = id);
+create policy "profiles_update_own" on public.profiles for update using (auth.uid() = id) with check (auth.uid() = id);
+
+create or replace function public.prevent_role_change()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if old.papel is distinct from new.papel and auth.uid() = old.id then
+    raise exception 'O papel nao pode ser alterado pelo proprio usuario';
+  end if;
+  return new;
+end $$;
+create trigger profiles_prevent_role_change before update on public.profiles
+for each row execute function public.prevent_role_change();
+
+create or replace function public.handle_new_user()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare
+  p_papel text;
+  p_nome text;
+begin
+  if new.email like '%@alunos.utfpr.edu.br' then
+    p_papel := 'aluno';
+  elsif new.email like '%@utfpr.edu.br' then
+    p_papel := 'professor';
+  else
+    raise exception 'Use seu e-mail institucional (@alunos.utfpr.edu.br ou @utfpr.edu.br)';
+  end if;
+  if new.raw_user_meta_data->>'papel' = 'estagiario' then
+    p_papel := 'estagiario';
+  end if;
+  p_nome := coalesce(nullif(new.raw_user_meta_data->>'full_name', ''), split_part(new.email, '@', 1));
+  insert into public.profiles (id, nome, email, papel) values (new.id, p_nome, new.email, p_papel);
+  return new;
+end $$;
+create trigger on_auth_user_created after insert on auth.users
+for each row execute function public.handle_new_user();
+
+-- ============ LOCAIS ============
+create table public.locais (
+  id uuid primary key default gen_random_uuid(),
+  nome text not null,
+  categoria text not null check (categoria in ('Blocos','RU','Biblioteca','Coordenação','Informática')),
+  descricao text,
+  lat double precision not null,
+  lng double precision not null
+);
+alter table public.locais enable row level security;
+create policy "locais_select_public" on public.locais for select using (true);
+
+-- ============ SALAS ============
+create table public.salas (
+  id uuid primary key default gen_random_uuid(),
+  local_id uuid not null references public.locais(id) on delete cascade,
+  nome text not null,
+  tipo text not null,
+  andar text
+);
+alter table public.salas enable row level security;
+create policy "salas_select_public" on public.salas for select using (true);
+
+-- ============ HORARIOS ============
+create table public.horarios (
+  id uuid primary key default gen_random_uuid(),
+  sala_id uuid not null references public.salas(id) on delete cascade,
+  dia_semana int not null check (dia_semana between 1 and 5),
+  inicio time not null,
+  fim time not null,
+  disciplina text not null,
+  professor text not null,
+  turma text
+);
+alter table public.horarios enable row level security;
+create policy "horarios_select_public" on public.horarios for select using (true);
+
+-- ============ AVISOS ============
+create table public.avisos (
+  id uuid primary key default gen_random_uuid(),
+  sala_id uuid not null references public.salas(id) on delete cascade,
+  tipo text not null check (tipo in ('Prova','Mudança de sala','Aula cancelada')),
+  data_evento date not null,
+  horario time,
+  nova_sala_id uuid references public.salas(id) on delete set null,
+  mensagem text,
+  criado_por uuid not null references public.profiles(id) on delete cascade,
+  criador_nome text,
+  criado_em timestamptz not null default now()
+);
+alter table public.avisos enable row level security;
+create policy "avisos_select_public" on public.avisos for select using (true);
+create policy "avisos_insert_professor" on public.avisos for insert with check (
+  exists (select 1 from public.profiles p where p.id = auth.uid() and p.papel = 'professor')
+);
+
+create or replace function public.set_aviso_autor()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare v_nome text;
+begin
+  select nome into v_nome from public.profiles where id = new.criado_por;
+  new.criador_nome := coalesce(v_nome, 'Professor(a)');
+  return new;
+end $$;
+create trigger avisos_set_autor before insert on public.avisos
+for each row execute function public.set_aviso_autor();
+
+-- ============ CHAMADOS ============
+create table public.chamados (
+  id uuid primary key default gen_random_uuid(),
+  categoria text not null,
+  sala_id uuid references public.salas(id) on delete set null,
+  local_texto text not null,
+  descricao text not null,
+  foto_url text,
+  prioridade text not null default 'normal' check (prioridade in ('alta','normal')),
+  status text not null default 'aberto' check (status in ('aberto','em_andamento','resolvido')),
+  autor_nome text,
+  autor_papel text,
+  criado_por uuid not null references public.profiles(id) on delete cascade,
+  criado_em timestamptz not null default now(),
+  atualizado_em timestamptz not null default now()
+);
+alter table public.chamados enable row level security;
+
+create policy "chamados_insert_auth" on public.chamados for insert with check (auth.uid() = criado_por);
+create policy "chamados_select_own_or_estagiario" on public.chamados for select using (
+  auth.uid() = criado_por
+  or exists (select 1 from public.profiles p where p.id = auth.uid() and p.papel = 'estagiario')
+);
+create policy "chamados_update_estagiario" on public.chamados for update using (
+  exists (select 1 from public.profiles p where p.id = auth.uid() and p.papel = 'estagiario')
+) with check (
+  exists (select 1 from public.profiles p where p.id = auth.uid() and p.papel = 'estagiario')
+);
+
+create or replace function public.set_chamado_autor_prioridade()
+returns trigger language plpgsql security definer set search_path = public as $$
+declare v_prof public.profiles%rowtype;
+begin
+  if auth.uid() is null then
+    select * into v_prof from public.profiles where id = new.criado_por;
+  else
+    select * into v_prof from public.profiles where id = auth.uid();
+  end if;
+  if v_prof.id is not null then
+    new.autor_nome := v_prof.nome;
+    new.autor_papel := v_prof.papel;
+    if auth.uid() is not null then
+      new.prioridade := case when v_prof.papel = 'professor' then 'alta' else 'normal' end;
+    end if;
+  end if;
+  return new;
+end $$;
+create trigger chamados_set_autor before insert on public.chamados
+for each row execute function public.set_chamado_autor_prioridade();
+
+create or replace function public.touch_chamado()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  new.atualizado_em := now();
+  return new;
+end $$;
+create trigger chamados_touch before update on public.chamados
+for each row execute function public.touch_chamado();
+
+-- ============ CARDAPIO ============
+create table public.cardapio (
+  data date not null,
+  refeicao text not null check (refeicao in ('almoco','janta')),
+  prato_principal text,
+  guarnicao text,
+  salada text,
+  sobremesa text,
+  vegetariana text,
+  alterado boolean not null default false,
+  observacao text,
+  abre time,
+  fecha time,
+  atualizado_em timestamptz not null default now(),
+  primary key (data, refeicao)
+);
+alter table public.cardapio enable row level security;
+create policy "cardapio_select_public" on public.cardapio for select using (true);
