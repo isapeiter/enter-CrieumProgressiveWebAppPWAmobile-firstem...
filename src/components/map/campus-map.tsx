@@ -125,7 +125,7 @@ export function CampusMap({ onSelectLocal, foco }: CampusMapProps) {
   };
 
   return (
-    <div className="relative h-full w-full overflow-hidden">
+    <div className="relative h-full w-full overflow-hidden isolate">
       <MapContainer
         center={CENTRO_MAPA}
         zoom={17}

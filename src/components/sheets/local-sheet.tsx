@@ -41,8 +41,8 @@ export function LocalSheet({ local, aberta, onOpenChange }: LocalSheetProps) {
     <Drawer open={aberta && Boolean(local)} onOpenChange={onOpenChange}>
       <DrawerContent className="mx-auto max-w-[480px]">
         {local && (
-          <>
-            <DrawerHeader className="text-left">
+          <div className="flex min-h-[38dvh] max-h-[85dvh] flex-col">
+            <DrawerHeader className="shrink-0 text-left">
               <div className="flex items-center gap-2">
                 <span
                   className="h-3.5 w-3.5 rounded-full border-2 border-white shadow"
@@ -62,7 +62,7 @@ export function LocalSheet({ local, aberta, onOpenChange }: LocalSheetProps) {
               </DrawerDescription>
             </DrawerHeader>
 
-            <div className="max-h-[58vh] overflow-y-auto px-4 pb-8">
+            <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))]">
               {local.categoria === "RU" && <CardapioCard data={hojeISO()} />}
 
               {salas && salas.length > 0 && (
@@ -122,7 +122,7 @@ export function LocalSheet({ local, aberta, onOpenChange }: LocalSheetProps) {
                   </p>
                 )}
             </div>
-          </>
+          </div>
         )}
       </DrawerContent>
     </Drawer>
